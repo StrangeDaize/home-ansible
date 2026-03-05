@@ -1,0 +1,21 @@
+---
+- hosts: all
+  become: yes
+  become_method: sudo
+
+  tasks:
+    - name: Confirm dns does not exist in dhcpdc.conf
+      lineinfile:
+        state: absent
+        path: /etc/dhcpcd.conf
+        line: "static domain_name_servers=192.168.1.1 8.8.8.8 8.8.4.4"
+      check_mode: true
+      changed_when: false
+      register: dns_dhcpcd_exists
+
+    - name: update dhcpcd.conf if missing dns
+      lineinfile:
+        state: present
+        dest: /etc/dhcpcd.conf
+        line: "static domain_name_servers=192.168.1.1 8.8.8.8 8.8.4.4"
+      when: dns_dhcpcd_exists.found == "0"

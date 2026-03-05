@@ -1,0 +1,21 @@
+---
+- hosts: all
+  gather_facts: yes
+  tasks:
+  - name: is ntpd service already running?
+    shell: service ntpd status warn=false
+    register: _svc_ntpd
+    failed_when: _svc_ntpd.rc != 0 and ("unrecognized service" not in _svc_ntpd.stderr)
+    ignore_errors: true
+  - name: restart ntpd if running
+    service: name=ntpd state=restarted
+    when: "_svc_ntpd.rc == 0"
+
+  - name: is sshd service already running?
+    shell: service sshd status warn=false
+    register: _svc_sshd
+    failed_when: _svc_sshd.rc != 0 and ("unrecognized service" not in _svc_sshd.stderr)
+    ignore_errors: true
+  - name: restart sshd if running
+    service: name=sshd state=restarted
+    when: "_svc_sshd.rc == 0"

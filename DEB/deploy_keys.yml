@@ -1,0 +1,28 @@
+---
+- hosts: all
+  become: yes
+  become_method: sudo
+#  vars:
+#    users:
+#      - username: ansible_func
+#      - username: Dwayne
+#      - username: root
+
+  tasks:
+  - name: Ensures ssh dir exists
+    file:
+      path: "/home/{{ item.username }}/.ssh"
+      state: directory
+      mode: '0700'
+      owner: "{{ item.username }}"
+      group: "{{ item.username }}"
+    with_items: "{{ users }}"
+
+  - name: copy pub key to authorized_keys
+    copy:
+      src: "./public_keys/{{ item.username }}/ssh/id_rsa.pub"
+      dest: "/home/{{ item.username }}/.ssh/authorized_keys"
+      owner: "{{ item.username }}"
+      group: "{{ item.username }}"
+      mode: "0644"
+    with_items: "{{ users }}"

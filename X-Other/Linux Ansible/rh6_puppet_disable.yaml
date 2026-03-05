@@ -1,0 +1,53 @@
+---
+- hosts: all
+  become: yes
+  become_method: sudo
+  gather_facts: false
+
+   
+  tasks:
+  - name: Puppet service check
+    service_facts:
+    when: "'puppet' in services"
+    register: pup_exists
+    ignore_errors: yes
+
+  - name: missing service
+    service_facts:
+    when: "'puppet.service' in services"
+    register: pup_exists
+    ignore_errors: yes
+
+  - name: Command line disable puppet agent with message
+    ansible.builtin.command:
+      cmd: /opt/puppetlabs/puppet/bin/puppet agent --disable
+    ignore_errors: yes
+
+- name: Stop Puppet and Disable Service if exists
+    service:
+      name: puppet
+      state: stopped
+      enabled: no
+    ignore_errors: yes
+    when: pup_exists
+
+  - name: Command line disable puppet agent with message
+    ansible.builtin.command:
+      cmd: /opt/puppetlabs/puppet/bin/puppet agent --disable
+    ignore_errors: yes
+
+
+
+  - name: Stop puppet agent
+    shell: /usr/bin/puppet agent --disable "Disabled via ANSIBLE Contact L3 for Concerns"
+    register: puppet_state
+    changed_when: puppet_state.rc == 2
+    failed_when: puppet_state.rc != 2 and puppet_state.rc != 0
+    ignore_errors: yes
+    when: pup_exists
+  
+  - name: "Stopped puppet agent output"
+    debug: var=puppet_agent.stdout_lines
+    when: puppet_state|failed
+    ignore_errors: yes
+    when: pup_exists

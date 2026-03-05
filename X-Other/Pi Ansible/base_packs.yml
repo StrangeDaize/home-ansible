@@ -1,0 +1,13 @@
+---
+- hosts: all
+  tasks:
+    - name: Install base rpi packages 
+      become: true
+      become_user: root
+      apt:
+        name: 
+          - screen
+          - nmon
+        state: present
+        update_cache: true
+...

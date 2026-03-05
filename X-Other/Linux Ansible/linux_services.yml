@@ -1,0 +1,29 @@
+---
+- name: Making service changes (start/stop/restart)
+  tasks:
+    - hosts: all
+      gather_facts: False
+      tasks:
+    - name: Start service httpd, if not started
+      ansible.builtin.service:
+        name: httpd
+        state: started
+      tags: start
+
+    - name: Stop service httpd, if started
+      ansible.builtin.service:
+        name: httpd
+        state: stopped
+      tags: stop
+
+    - name: Restart service httpd, in all cases
+      ansible.builtin.service:
+        name: httpd
+        state: restarted
+      tags: restart
+
+    - name: Reload service httpd, in all cases
+      ansible.builtin.service:
+        name: httpd
+        state: reloaded
+      tags: reload

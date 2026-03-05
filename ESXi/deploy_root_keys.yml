@@ -1,0 +1,14 @@
+---
+- hosts: all
+  become: yes
+  become_method: sudo
+
+  tasks:
+
+  - name: copy pub key to authorized_keys
+    copy:
+      src: "./public_keys/root/ssh/id_rsa.pub"
+      dest: "/etc/ssh/keys-root/authorized_keys"
+      owner: root
+      group: root
+      mode: "0644"

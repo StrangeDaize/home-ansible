@@ -1,0 +1,8 @@
+---
+- hosts: all
+  become: yes
+  become_method: sudo
+  tasks:
+      - name: Confirm latest patches
+        command: "yum update -y"
+        ignore_errors: yes

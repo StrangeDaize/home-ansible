@@ -1,0 +1,35 @@
+---
+- hosts: all
+  become: yes
+  become_method: sudo
+
+  tasks:
+  - name: Install snmp if missing
+    ansible.builtin.package:
+      name:
+        - snmp
+      state: present
+
+
+  - name: Replace old hostname with new hostname (requires Ansible >= 2.4)
+    ansible.builtin.replace:
+      path: /etc/hosts
+      regexp: 'agentaddress  127.0.0.1,[::1]'
+      replace: 'agentAddress udp:161,udp6:[::1]:161'
+
+  - name: Replace old hostname with new hostname (requires Ansible >= 2.4)
+    ansible.builtin.replace:
+      path: /etc/hosts
+      regexp: 'rocommunity  public default -V systemonly'
+      replace: 'rocommunity  public'
+
+  - name: Replace old hostname with new hostname (requires Ansible >= 2.4)
+    ansible.builtin.replace:
+      path: /etc/hosts
+      regexp: 'rocommunity6  public default -V systemonly'
+      replace: 'rocommunity6  public'
+
+  - name: restart snmp
+    service:
+      name: snmpd
+      state: restarted

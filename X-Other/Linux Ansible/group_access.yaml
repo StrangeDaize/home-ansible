@@ -1,0 +1,22 @@
+---
+- hosts: all
+  become: yes
+  become_method: sudo
+
+  tasks:
+    - name: Ensure GROUP_NAME exists in access.conf
+      lineinfile:
+        state: present
+        path: /etc/security/access.conf
+        line: "+ : (GROUP_NAME) : ALL"
+        backup: yes
+        tag: add_group_name
+
+    - name: Remove GROUP_NAME from access.conf
+      lineinfile:
+        state: absent
+        path: /etc/security/access.conf
+        line: '{{ remove_group }}' 
+        backup: yes
+      when: remove_group == true
+      tag: remove_group_name

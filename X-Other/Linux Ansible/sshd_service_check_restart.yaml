@@ -1,0 +1,20 @@
+---
+- hosts: all
+  gather_facts: yes
+  tasks:
+
+  - name: missing service
+    service_facts:
+    when: "'sshd' in services"
+    register: test
+
+  - name: missing service
+    service_facts:
+    when: "'sshd.service' in services"
+    register: test
+
+  - name: restart SSHD
+    service:
+      name: sshd
+      state: restarted
+    when: test

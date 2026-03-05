@@ -1,0 +1,25 @@
+---
+- hosts: all
+  become: yes
+  become_method: sudo
+
+  tasks:
+  - name: Confirm tmux is installed
+    ansible.builtin.yum:
+      name: tmux
+      state: present
+
+  - name: Confirm tmux, python3 and vim-enhanced are installed
+    ansible.builtin.yum:
+      name:
+        - tmux
+        - python3
+        - vim-enhanced
+      state: present
+
+  - name: Install the latest version of emacs
+    ansible.builtin.yum:
+      name:
+        - emacs
+      state: latest
+

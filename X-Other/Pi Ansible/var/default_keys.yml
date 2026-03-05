@@ -1,0 +1,7 @@
+---
+
+keystodeploy:
+  - name: pi
+    sshkey: ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQC8fRUJ7HYOFdQocw1O+LExmDH9N3NLGm+EtXpG9bvTW7T6FJNmtUboS9+P44JkBeBdqsjg1QijcatDi7LlXJnW3a0jbQvBf7E0mTLASx+zdsMTBok86nmYSTiavVAZqIvZR6lWNLnMG81hYlAvtAKiHOGPqlWweI/dqIe+HhwEfTlkr50TA5FrCj30kdDVgpzlvi60r94IXz7un8BC0gsRhEhgLsPQZFVLza/JMwgi1MXZljQmMJ2K7By6t1vzjFy7iuaQhg4Ls7JBBL3e6P0LO98d9hajisUifpRZ7joc0hvctX4h+0Sz18yHJCdJGpbmQ5Hudrs5/cunMhVC83nj pi@nuc1
+  - name: ansible-func
+    sshkey: ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQD2m98vWG6kTUcqbJPnihD9q8Tngn9b4OYIEIdLx6b0/b6D+7cw6uIj/XO4sElUl1snm+nNNhOb2oARb/OVs+ox/SC++YDk61O32ieensDVNRlCDWq+bTo+mpXSP/RhDwYXI7ws7GmC6xvZSt3WBxp8wDrLyOWItJUSnqY9UVBxoiU8GCHuG+hYPKHXDAyvaCS2bAkU9omZERC8Dd3h7DjaiJ9/0hnwG5LODG/NqAuyl4Zlu/wPAPk7ui5CelCWhclBlb9+S0qpOWGoJ4GJqglXatrMqUqPAgjJ/64r1gTYwFiu9fO5LOsv/8X+4GiAHxX3hu4ba3uqYjysmDaFfOuN ansible-generated on dell-tny

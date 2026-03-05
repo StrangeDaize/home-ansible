@@ -1,0 +1,25 @@
+---
+- hosts: all
+  become: yes
+  become_method: sudo
+
+  tasks:
+  - name: Stop Puppet and Disable Service if exists
+    systemd:
+      name: puppet
+      state: stopped
+      enabled: no
+
+  - name: Command line disable puppet agent with message
+    ansible.builtin.command:
+      cmd: puppet agent --disable "Disabled via ANSIBLE Contact L3 for Concerns"
+
+  - name: Stop puppet agent
+    shell: /usr/bin/puppet agent --disable "Disabled via ANSIBLE Contact L3 for Concerns"
+    register: puppet_state
+    changed_when: puppet_state.rc == 2
+    failed_when: puppet_state.rc != 2 and puppet_state.rc != 0
+
+  - name: "Stopped puppet agent output"
+    debug: var=puppet_agent.stdout_lines
+    when: puppet_state|failed

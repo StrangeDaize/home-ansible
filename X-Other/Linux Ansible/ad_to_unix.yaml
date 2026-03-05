@@ -1,0 +1,20 @@
+---
+- hosts: all
+  become: yes
+  become_method: sudo
+
+  tasks:
+    - name: Check if we have pbis
+      stat:
+        path: /opt/pbis/bin/lwsm
+      register: have_lwsm
+
+    - name: List all BeyondTrust service status 
+      ansible.builtin.command:
+        cmd: /opt/pbis/bin/lwsm list
+      when: have_lwsm.stat.exists == true
+
+    - name: Generate support pack
+      ansible.builtin.command:
+        cmd: /opt/pbis/libexec/pbis-support.pl
+      when: ( have_lwsm.stat.exists == true ) and ( generate_sw_pack == true )

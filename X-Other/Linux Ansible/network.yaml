@@ -1,0 +1,55 @@
+---
+- hosts: all
+  become: yes
+  become_method: sudo
+
+  tasks:
+    - name: Confirm dns does not exist in dhcpdc.conf
+      lineinfile:
+        state: present
+        path: /etc/dhcpcd.conf
+        line: "static domain_name_servers=192.168.1.1 8.8.8.8 8.8.4.4"
+        backup: yes
+
+    - name: Ensure GROUP_NAME exists in access.conf
+      lineinfile:
+        state: present
+        path: /etc/security/access.conf
+        line: "+ : (GROUP_NAME) : ALL"
+        backup: yes
+
+    - name: Check if we have chrony.conf
+      stat:
+        path: /etc/chrony.conf
+      register: have_chrony
+
+    - name: Update chrony.conf
+      lineinfile:
+        path: /etc/chrony.conf
+        regexp: '^(.*)server(.*)$'
+        line: 'server time1.google.com iburst'
+        state: present
+        backrefs: yes
+      when: have_chrony.stat.exists == true
+
+    - name: Add second time server
+      lineinfile:
+        path: /etc/chrony.conf
+        regexp: 'server time1.google.com iburst'
+        line: 'server time2.google.com iburst'
+        insertafter: 'server time1.google.com iburst'
+        state: present
+        backup: yes
+      when: have_chrony.stat.exists == true
+
+    - name: Confirm resolv.conf has lines
+      blockinfile:
+        dest: /etc/resolv.conf
+        block: |
+          search lan
+          nameserver 192.168.1.2
+          nameserver 192.168.1.1
+          nameserver 8.8.8.8
+          nameserver 8.8.4.4
+          nameserver 2605:a601:a673:1300::1
+        backup: yes

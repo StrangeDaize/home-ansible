@@ -1,0 +1,22 @@
+---
+- name: Create Local User
+  hosts: all
+  become: true
+  gather_facts: no
+  vars:
+# Define your username and password here that you want to create on target hosts or use the variables in tower.
+    #username: USERNAMEHERE
+    #userpass: user_password_here
+  tasks:
+    - name: Create User
+      ansible.builtin.user:
+        name: "{{ username }}"
+        state: present
+        shell: /bin/bash
+        #You can pass a sha512 hashed password if you wish
+        #password: "{{ userpass | password_hash('sha512') }}"
+        #update_password: on_create
+        # Do you want to add groups?
+        groups: "{{ super_group }}"
+        append: yes
+        local: yes

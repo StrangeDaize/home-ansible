@@ -1,0 +1,69 @@
+---
+- hosts: all
+  become: yes
+  become_method: sudo
+
+  tasks:
+  - name: Confirm tmux is installed
+    register: unameout
+    command: "uname -a"
+
+  - debug:
+      var: unameout.stdout_lines
+
+  - name: Get hostname
+    register: hots
+    shell: echo $HOSTNAME
+  - debug:
+      var: hots.stdout_lines
+
+  - name: Which python
+    register: pyton
+    shell: python --version
+    when: (ansible_distribution == "RedHat" and ansible_distribution_major_version != "8")
+
+  - name: print result
+    debug:
+      msg:
+        - "{{pyton}}"
+  - name: Yum example
+    register: yums
+    shell: yum version
+    when: (ansible_distribution == "RedHat" and ansible_distribution_major_version != "8")
+
+  - debug:
+      var: yums.stdout_lines
+
+  - name: Yum install screen
+    register: yums
+    shell: yum -y install screen
+    when: (ansible_distribution == "RedHat" and ansible_distribution_major_version != "8")
+  - debug:
+      var: yums.stdout_lines
+
+  - name: Yum install tmux
+    register: tums
+    shell: yum -y install tmux
+    when: (ansible_distribution == "RedHat" and ansible_distribution_major_version != "8")
+  - debug:
+      var: tums.stdout_lines
+
+  - name: "Run yum update only on RHEL 6"
+    command: yum update -y
+    when: (ansible_distribution == "RedHat" and ansible_distribution_major_version == "6")
+
+  - name: "Run dnf / yum update only on RHEL 7"
+    yum: name=* state=latest 
+    when: (ansible_distribution == "RedHat" and ansible_distribution_major_version == "7")
+
+  - name: "Run dnf update only on RHEL 8"
+    dnf: name=* state=latest
+    when: (ansible_distribution == "RedHat" and ansible_distribution_major_version == "8")
+
+  - name: Get list of packages that were update
+    shell: 'yum history info | awk "/^Packages Altered/,/^Scriptlet/" | grep -v Scriptlet || echo "No Changes Found"'
+    register: history
+    args:
+      warn: no
+  - debug:
+      var: history.stdout_lines

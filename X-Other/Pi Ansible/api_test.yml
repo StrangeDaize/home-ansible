@@ -1,0 +1,15 @@
+---
+
+- hosts: all
+  tasks:
+  - name: Check that you can connect (GET) to Google and it returns a status 200
+    uri:
+      url: http://www.google.com
+
+
+  - name: Check kubernetes dashboard returns a status 200 and fail if the word APIResourceList is not in the page contents
+    uri:
+        url: http://dell-tny:8001/api/v1
+        return_content: yes
+    register: this
+    failed_when: "'APIResourceList' not in this.content"

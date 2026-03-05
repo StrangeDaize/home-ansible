@@ -1,0 +1,29 @@
+---
+- hosts: all
+  become: yes
+  become_method: sudo
+
+  tasks: 
+
+  - name: Install PIP
+    become: true
+    become_user: root
+    apt:
+      name:
+        pip
+      state: present
+      update_cache: true
+ 
+
+  - name: Install pexpect
+    pip:
+      name: pexpect
+    become: true
+    
+  - name: Upgrading Firmware
+    expect:
+      command: rpi-update
+      responses:
+        'First Question in the prompt' : 'y'
+
+...

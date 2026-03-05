@@ -1,0 +1,15 @@
+---
+- hosts: all
+  become: yes
+  become_method: sudo
+
+  tasks:
+  - name: Confirm tmux, python3 and vim-enhanced are installed
+    ansible.builtin.package:
+      name:
+        - tmux
+        - python3
+        - vim-enhanced
+        - nmon
+      state: present
+      ignore_errors: yes

@@ -1,0 +1,54 @@
+---
+- name: Create New User
+  hosts: all
+  become: true
+  gather_facts: no
+  tasks:
+
+
+  - name: Check if sssd service exist
+    shell: "if chkconfig --list | grep -q sssd;   then echo true;   else echo false; fi;"
+    register: sssd_exists
+
+  - name: Stop if sssd service exist
+    service:
+      name: sssd
+      state: stopped
+    when: sssd_exists
+    register: sssd_stopped
+
+  - name: Check if pbis service exist
+    stat:
+      path: /opt/pbis/bin/lwsm
+    register: lwsmd_exists
+
+  - name: Stop if pbis service exist
+    service:
+      name: lwsmd
+      state: stopped
+    when: lwsmd_exists.stat.exists
+    register: lwsmd_stopped
+
+  - name: Create Local User {{ username }} User
+    ansible.builtin.user:
+      name: "{{ username }}"
+      state: present
+      shell: /bin/bash
+      password: "{{ userpass | password_hash('sha512') }}"
+      update_password: on_create
+      # Do you want to add groups?
+      #groups: "{{ super_group }}"
+      append: yes
+
+
+  - name: Start if sssd service exist after adding {{ username }}
+    service:
+      name: sssd
+      state: restarted
+    when: sssd_stopped
+
+  - name: Start if pbis service exist after adding {{ username }}
+    service:
+      name: lwsmd
+      state: restarted
+    when: lwsmd_stopped

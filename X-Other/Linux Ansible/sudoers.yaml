@@ -1,0 +1,49 @@
+---
+- hosts: all
+  become: yes
+  become_method: sudo
+
+  tasks:
+  - name: Add webteam members to sudoers.d
+    lineinfile:
+      path: /etc/sudoers.d/09-webteam
+      line: "webteam	ALL = ALL"
+      create: yes
+      mode: 0440
+      owner: root
+      group: root
+    register: webteam_sudo_exists
+
+  - name: Add L3 support members to sudoers.d
+    lineinfile:
+      path: /etc/sudoers.d/01-lin-win-unix
+      line: "l3unix	ALL = ALL"
+      create: yes
+      mode: 0440
+      owner: root
+      group: root
+    register: lin_win_unix_sudo_exists
+
+  - name: Add backup team members to sudoers.d
+    lineinfile:
+      path: /etc/sudoers.d/77-webteam
+      line: "backrestore	ALL = ALL"
+      create: yes
+      mode: 0440
+      owner: root
+      group: root
+    register: backrestore_sudo_exists
+
+  - name: Add numerous team members to sudoers.d
+    blockinfile:
+      dest: /etc/sudoers.d/99-randoms
+      block: |
+          Host_Alias  WEBS = 192.168.1.0/255.255.255.0
+          tom ALL = ALL
+          John WEBS = ALL
+      create: yes
+      mode: 0440
+      owner: root
+      group: root
+      backup: yes
+    register: numerous_sudo_exists
